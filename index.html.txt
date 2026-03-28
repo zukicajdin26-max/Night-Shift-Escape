@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Night Shift Escape</title>
+<style>
+body {
+  margin: 0;
+  background: black;
+  overflow: hidden;
+}
+
+#player {
+  width: 20px;
+  height: 20px;
+  background: white;
+  position: absolute;
+}
+
+.enemy {
+  width: 20px;
+  height: 20px;
+  background: red;
+  position: absolute;
+}
+
+#exit {
+  width: 30px;
+  height: 30px;
+  background: green;
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+}
+</style>
+</head>
+<body>
+
+<div id="player"></div>
+<div id="exit"></div>
+
+<script>
+let player = document.getElementById("player");
+let x = 50, y = 50;
+
+let enemies = [];
+
+function createEnemy(x, y) {
+  let e = document.createElement("div");
+  e.className = "enemy";
+  e.style.left = x + "px";
+  e.style.top = y + "px";
+  document.body.appendChild(e);
+
+  enemies.push({el: e, x, y});
+}
+
+createEnemy(200, 200);
+createEnemy(400, 100);
+createEnemy(300, 300);
+
+document.addEventListener("keydown", e => {
+  if(e.key === "w") y -= 10;
+  if(e.key === "s") y += 10;
+  if(e.key === "a") x -= 10;
+  if(e.key === "d") x += 10;
+
+  player.style.left = x + "px";
+  player.style.top = y + "px";
+
+  checkCollision();
+});
+
+function moveEnemies() {
+  enemies.forEach(e => {
+    let dx = x - e.x;
+    let dy = y - e.y;
+
+    e.x += dx * 0.01;
+    e.y += dy * 0.01;
+
+    e.el.style.left = e.x + "px";
+    e.el.style.top = e.y + "px";
+
+    if(Math.abs(dx) < 20 && Math.abs(dy) < 20) {
+      alert("💀 You were caught!");
+      location.reload();
+    }
+  });
+}
+
+function checkCollision() {
+  let exit = document.getElementById("exit");
+  let ex = window.innerWidth - 50;
+  let ey = window.innerHeight - 50;
+
+  if(Math.abs(x - ex) < 30 && Math.abs(y - ey) < 30) {
+    alert("🎉 You escaped!");
+    location.reload();
+  }
+}
+
+setInterval(moveEnemies, 50);
+</script>
+
+</body>
+</html>
